@@ -1,0 +1,48 @@
+import type { LinguiDocumentProps } from '@graphcommerce/lingui-next/server'
+import { withLingui } from '@graphcommerce/lingui-next/server'
+import type { EmotionCacheProps } from '@graphcommerce/next-ui/server'
+import {
+  DocumentBodyEnd,
+  DocumentBodyStart,
+  DocumentHeadEnd,
+  DocumentHeadStart,
+  getCssFlagsInitScript,
+  normalizeLocale,
+  withEmotionCache,
+} from '@graphcommerce/next-ui/server'
+import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
+import NextDocument, { Head, Html, Main, NextScript } from 'next/document'
+
+class Document extends NextDocument<EmotionCacheProps & LinguiDocumentProps> {
+  render() {
+    return (
+      <Html lang={normalizeLocale(this.props.locale)}>
+        <Head>
+          <DocumentHeadStart key='head-start' {...this.props} />
+          {getCssFlagsInitScript()}
+          {/* Inject MUI styles first to match with the prepend: true configuration. */}
+          <meta name='emotion-insertion-point' content='' />
+          {this.props.emotionStyleTags}
+          {this.props.linguiScriptTag}
+          {/* Google Fonts: GFS Didot & Pinyon Script */}
+          <link rel='preconnect' href='https://fonts.googleapis.com' />
+          <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='' />
+          <link
+            href='https://fonts.googleapis.com/css2?family=GFS+Didot&family=Pinyon+Script&display=swap'
+            rel='stylesheet'
+          />
+          <DocumentHeadEnd key='head-end' {...this.props} />
+        </Head>
+        <body>
+          <DocumentBodyStart key='body-start' {...this.props} />
+          <InitColorSchemeScript attribute='class' />
+          <Main />
+          <NextScript />
+          <DocumentBodyEnd key='body-start' {...this.props} />
+        </body>
+      </Html>
+    )
+  }
+}
+
+export default withEmotionCache(withLingui(Document, (locale) => import(`../locales/${locale}.po`)))

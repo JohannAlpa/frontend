@@ -1,0 +1,59 @@
+import type { GraphCommerceConfig } from '@graphcommerce/next-config'
+
+/** Docs: https://graphcommerce.org/docs/framework/config */
+const config: Partial<GraphCommerceConfig> = {
+  robotsAllow: false,
+  limitSsg: true,
+
+  hygraphEndpoint: '',
+  magentoEndpoint: 'https://magento.test/graphql',
+  magentoVersion: 248,
+  canonicalBaseUrl: 'https://magento.test',
+  storefront: [
+    {
+      locale: 'en',
+      magentoStoreCode: 'jewelry_store_view',
+      defaultLocale: true,
+      googleAnalyticsId: undefined,
+      googleRecaptchaKey: undefined,
+    },
+    {
+      locale: 'nl',
+      magentoStoreCode: 'nl_NL',
+
+      // robotsAllow: false,
+      // permissions: { cart: 'DISABLED', checkout: 'DISABLED', customerAccount: 'DISABLED' },
+    },
+  ],
+  recentlyViewedProducts: { enabled: true },
+  productFiltersPro: true,
+  productFiltersLayout: 'DEFAULT',
+  breadcrumbs: true,
+  // previewSecret: '123',
+
+  // compare: true,
+  // compareVariant: 'ICON',
+  // customerDeleteEnabled: false,
+
+  // permissions: { cart: 'ENABLED', checkout: 'ENABLED', customerAccount: 'ENABLED' },
+  // customerCompanyFieldsEnable: false,
+  // customerAddressNoteEnable: false,
+  // enableGuestCheckoutLogin: false,
+  // dataLayer: { coreWebVitals: false },
+  // wishlistHideForGuests: true,
+
+  // googleAnalyticsId: undefined,
+  // googlePlaystore: undefined,
+  // googleRecaptchaKey: undefined,
+  // googleTagmanagerId: undefined,
+
+  // configurableVariantForSimple: true,
+  // configurableVariantValues: { content: true, gallery: true, url: true },
+
+  // containerSizingContent: 'FULL_WIDTH',
+  // containerSizingShell: 'FULL_WIDTH',
+  // demoMode: true,
+  // breadcrumbs: false,
+}
+
+export default config
