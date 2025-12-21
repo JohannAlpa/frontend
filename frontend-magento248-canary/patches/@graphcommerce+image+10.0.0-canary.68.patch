@@ -1,0 +1,17 @@
+diff --git a/node_modules/@graphcommerce/image/components/Image.tsx b/node_modules/@graphcommerce/image/components/Image.tsx
+index 9f28816..4d540c2 100644
+--- a/node_modules/@graphcommerce/image/components/Image.tsx
++++ b/node_modules/@graphcommerce/image/components/Image.tsx
+@@ -301,6 +301,12 @@ const Image = React.forwardRef<HTMLImageElement, ImageProps>(
+       return { ...c, allSizes, deviceSizes }
+     }, [configContext])
+ 
++    // Respect global unoptimized setting from next.config.js (imageConfig.unoptimized)
++    // When `next.config.js` sets `images.unoptimized = true`, Next sets that in
++    // `process.env.__NEXT_IMAGE_OPTS`. Read that and default to unoptimized so
++    // the component renders raw <img> tags instead of using the Image Optimization API.
++    if ((config as any).unoptimized) unoptimized = true
++
+     const sizesOrig =
+       layout === 'fixed' && width && !sizesincoming ? (`${width}px` as SizesString) : sizesincoming
+ 

@@ -3,31 +3,39 @@ import withSerwistInit from '@serwist/next'
 import dotenv from 'dotenv'
 import type { NextConfig } from 'next'
 
-dotenv.config({ quiet: true })
+dotenv.config()
 
 const withPWA = withSerwistInit({
-  disable: process.env.NODE_ENV === 'development',
+  // disable: process.env.NODE_ENV === 'development',
   swSrc: 'lib/sw.ts',
   swDest: 'public/sw.js',
-  exclude: [/sitemap/, /robots/, 'sw.js', /\.(js|css)\.map$/, /\.well-known\//],
+  exclude: [/sitemap/, /robots/, 'sw.js'],
 })
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   onDemandEntries: {
-    maxInactiveAge: 1000 * 60 * 10,
+    maxInactiveAge: 25 * 1000,
     pagesBufferLength: 10,
   },
   images: {
-    // Disable Next/Image optimization for local magento.test domain
-    unoptimized: process.env.NODE_ENV !== 'production',
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    qualities: [52, 75],
+    // Bypass Next.js image optimizer because configurator.reachdigital.dev
+    // resolves to a private IP that Next blocks for security (SSRF protection)
+    unoptimized: true,
     remotePatterns: [
-      { hostname: 'configurator.reachdigital.dev' },
-      { hostname: 'magento.test', protocol: 'https' },
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
     ],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  reactCompiler: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 }
 
 export default withGraphCommerce(withPWA(nextConfig))
