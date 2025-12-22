@@ -99,24 +99,15 @@ function CmsPage(props: Props) {
 
   return (
     <>
-      <LayoutHeader
-        floatingMd
-        hideMd={
-          (import.meta as unknown as ImportMetaGraphCommerce).graphCommerce?.breadcrumbs ?? false
-        }
-      >
-        <LayoutTitle size='small' component='span'>
-          Home
-        </LayoutTitle>
-      </LayoutHeader>
-
-      <LayoutHeader floatingMd floatingSm />
+      {/* Removed floating Home header to avoid duplicate sticky headers */}
 
       {/* Keep the ones above the PRE-LOVED collection */}
       {/* Hero 1 */}
+      {/* pull hero up behind header so header visually integrates with content */}
       <FullBleedCarousel
         images={heroSections.find((s) => s.id === 'hero-1')?.images ?? []}
         intervalMs={heroSections.find((s) => s.id === 'hero-1')?.intervalMs ?? 5000}
+        sx={{ mt: '-77px' }}
       />
 
       {/* Hero 2: NEW JEWELRY Collection */}

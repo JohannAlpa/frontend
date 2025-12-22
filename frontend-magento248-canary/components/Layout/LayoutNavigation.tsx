@@ -17,6 +17,8 @@ import {
   iconChevronDown,
   iconCustomerService,
   iconHeart,
+  iconSearch,
+  iconShoppingBag,
   IconSvg,
   LayoutDefault,
   MenuFabSecondaryItem,
@@ -24,13 +26,12 @@ import {
   NavigationFab,
   NavigationOverlay,
   NavigationProvider,
-  PlaceholderFab,
   useMemoDeep,
   useNavigationSelection,
 } from '@graphcommerce/next-ui'
 import { t } from '@lingui/core/macro'
 import { Trans } from '@lingui/react/macro'
-import { Divider, Fab } from '@mui/material'
+import { Badge, Box, Divider, Fab, IconButton } from '@mui/material'
 import { useRouter } from 'next/router'
 import { productListRenderer } from '../ProductListItems/productListRenderer'
 import { Footer } from './Footer'
@@ -117,66 +118,176 @@ export function LayoutNavigation(props: LayoutNavigationProps) {
         noSticky={router.asPath.split('?')[0] === '/'}
         header={
           <>
-            <Logo />
+            {/* Header wrapper: transparent, logo left, actions right */}
+            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', gap: 2 }}>
+              {/* Logo on the left */}
+              <Logo />
 
-            <DesktopNavBar>
-              {menu?.items?.[0]?.children?.slice(0, 2).map((item) => (
-                <DesktopNavItem key={item?.uid} href={`/${item?.url_path}`}>
-                  {item?.name}
-                </DesktopNavItem>
-              ))}
-              <DesktopNavItem
-                onClick={() => selection.set([menu?.items?.[0]?.uid || ''])}
-                onKeyUp={(evt) => {
-                  if (evt.key === 'Enter') {
-                    selection.set([menu?.items?.[0]?.uid || ''])
-                  }
+              {/* Spacer pushes actions to the right */}
+              <Box sx={{ flexGrow: 1 }} />
+
+              {/* Desktop actions: Search | Cart | Menu (three dots) */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, pr: { xs: 2, md: 4 } }}>
+                {/* Desktop search as small circular icon */}
+                <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+                  <IconButton
+                    href='/search'
+                    color='inherit'
+                    aria-label={t`Search`}
+                    sx={{ width: 44, height: 44, bgcolor: 'rgba(255,255,255,0.95)', boxShadow: 2 }}
+                  >
+                    <IconSvg src={iconSearch} />
+                  </IconButton>
+                </Box>
+
+                {/* Cart as circular white FAB (desktop) */}
+                <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+                  {cartEnabled && (
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <CartFab
+                        BadgeProps={{ color: 'secondary' }}
+                        sx={{
+                          width: 44,
+                          height: 44,
+                          minWidth: 44,
+                          bgcolor: 'rgba(255,255,255,0.95)',
+                          boxShadow: 2,
+                          borderRadius: '50%',
+                          overflow: 'hidden',
+                          p: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          '& svg': { margin: 0 },
+                        }}
+                      />
+                    </Box>
+                  )}
+                </Box>
+
+                <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+                  <IconButton
+                    onClick={() => selection.set([])}
+                    color='inherit'
+                    aria-label={t`Menu`}
+                    sx={{
+                      width: 44,
+                      height: 44,
+                      bgcolor: 'rgba(255,255,255,0.95)',
+                      '&:hover': { bgcolor: 'rgba(255,255,255,1)' },
+                      boxShadow: 1,
+                    }}
+                  >
+                    <Box sx={{ display: 'grid', gap: '4px' }}>
+                      <Box
+                        component='span'
+                        sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: 'text.primary' }}
+                      />
+                      <Box
+                        component='span'
+                        sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: 'text.primary' }}
+                      />
+                      <Box
+                        component='span'
+                        sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: 'text.primary' }}
+                      />
+                    </Box>
+                  </IconButton>
+                </Box>
+              </Box>
+
+              {/* Mobile top right (keeps an accessible search and menu) */}
+              <MobileTopRight
+                sx={{
+                  display: { xs: 'flex', sm: 'none' },
+                  alignItems: 'center',
+                  gap: 1.25,
+                  position: 'absolute',
+                  top: 16,
+                  right: 12,
+                  zIndex: 20,
                 }}
-                tabIndex={0}
               >
-                {menu?.items?.[0]?.name}
-                <IconSvg src={iconChevronDown} />
-              </DesktopNavItem>
-            </DesktopNavBar>
-            <DesktopNavActions>
-              <StoreSwitcherButton />
-              <SearchField
-                formControl={{ sx: { width: '400px' } }}
-                searchField={{ productListRenderer }}
-              />
-              <Fab href='/service' aria-label={t`Customer Service`} size='large' color='inherit'>
-                <IconSvg src={iconCustomerService} size='large' />
-              </Fab>
-              <WishlistFab
-                icon={<IconSvg src={iconHeart} size='large' />}
-                BadgeProps={{ color: 'secondary' }}
-              />
-              <CustomerFab
-                guestHref='/account/signin'
-                authHref='/account'
-                BadgeProps={{ color: 'secondary' }}
-              />
-              {/* The placeholder exists because the CartFab is sticky but we want to reserve the space for the <CartFab /> */}
-              {cartEnabled && <PlaceholderFab />}
-            </DesktopNavActions>
+                {/* Small search icon */}
+                <IconButton
+                  href='/search'
+                  color='inherit'
+                  aria-label={t`Search`}
+                  sx={{ bgcolor: 'rgba(255,255,255,0.7)', width: 36, height: 36 }}
+                >
+                  <IconSvg src={iconSearch} />
+                </IconButton>
 
-            <MobileTopRight>
-              <SearchFab size='responsiveMedium' />
-            </MobileTopRight>
+                {/* Cart: use CartFab for accurate quantity badge, scaled down */}
+                {cartEnabled && (
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <CartFab
+                      BadgeProps={{ color: 'secondary' }}
+                      sx={{
+                        width: 36,
+                        height: 36,
+                        minWidth: 36,
+                        bgcolor: 'rgba(255,255,255,0.95)',
+                        boxShadow: 2,
+                        ml: 0,
+                        borderRadius: '50%',
+                        overflow: 'hidden',
+                        p: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& svg': { margin: 0 },
+                      }}
+                    />
+                  </Box>
+                )}
+
+                {/* Menu: three vertical dots inside a translucent circle */}
+                <IconButton
+                  onClick={() => selection.set([])}
+                  color='inherit'
+                  aria-label={t`Menu`}
+                  sx={{
+                    bgcolor: 'rgba(255,255,255,0.95)',
+                    width: 36,
+                    height: 36,
+                    ml: 0,
+                    boxShadow: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Box sx={{ display: 'grid', gap: '3px' }}>
+                    <Box
+                      component='span'
+                      sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: 'text.primary' }}
+                    />
+                    <Box
+                      component='span'
+                      sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: 'text.primary' }}
+                    />
+                    <Box
+                      component='span'
+                      sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: 'text.primary' }}
+                    />
+                  </Box>
+                </IconButton>
+              </MobileTopRight>
+            </Box>
           </>
         }
-        footer={
-          <Footer
-            socialLinks={
-              footerBlock ? (
-                <CmsBlock cmsBlock={footerBlock} productListRenderer={productListRenderer} />
-              ) : (
-                <div />
-              )
-            }
-          />
-        }
-        cartFab={<CartFab BadgeProps={{ color: 'secondary' }} />}
+        // footer={
+        //   <Footer
+        //     socialLinks={
+        //       footerBlock ? (
+        //         <CmsBlock cmsBlock={footerBlock} productListRenderer={productListRenderer} />
+        //       ) : (
+        //         <div />
+        //       )
+        //     }
+        //   />
+        // }
         menuFab={<NavigationFab onClick={() => selection.set([])} />}
       >
         {children}

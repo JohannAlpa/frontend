@@ -1,0 +1,78 @@
+diff --git a/node_modules/@graphcommerce/next-ui/LayoutDefault/components/LayoutDefault.tsx b/node_modules/@graphcommerce/next-ui/LayoutDefault/components/LayoutDefault.tsx
+index 2cecd3f..708be29 100644
+--- a/node_modules/@graphcommerce/next-ui/LayoutDefault/components/LayoutDefault.tsx
++++ b/node_modules/@graphcommerce/next-ui/LayoutDefault/components/LayoutDefault.tsx
+@@ -4,6 +4,7 @@ import { sxx } from '@graphcommerce/next-ui'
+ import type { SxProps, Theme } from '@mui/material'
+ import { Box } from '@mui/material'
+ import { useScroll, useTransform } from 'framer-motion'
++
+ import { Container } from '../../Container/Container'
+ import { LayoutProvider } from '../../Layout/components/LayoutProvider'
+ import { SkipLink } from '../../SkipLink/SkipLink'
+@@ -50,6 +51,8 @@ export function LayoutDefault(props: LayoutDefaultProps) {
+     ([y, offset]: number[]) => y + offset,
+   )
+ 
++
++
+   const classes = withState({ noSticky })
+   const fabIconSize = useFabSize('responsive')
+ 
+@@ -79,18 +82,27 @@ export function LayoutDefault(props: LayoutDefaultProps) {
+           component='header'
+           className={classes.header}
+           sx={(theme) => ({
+-            zIndex: theme.zIndex.appBar - 1,
++            // Make header fixed and transparent overlaying hero sections
++            zIndex: theme.zIndex.appBar,
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'center',
+-            height: theme.appShell.headerHeightSm,
++            height: '77px',
++            position: 'fixed',
++            top: 0,
++            left: 0,
++            right: 0,
++            width: '100%',
++            // translucent overlay; stays at 40% opacity over hero content
++            background: 'rgba(255,255,255,0.4)',
++            backdropFilter: 'saturate(120%) blur(4px)',
++            transition: 'background-color 200ms ease, backdrop-filter 200ms ease',
+             pointerEvents: 'none',
+             '& > *': {
+               pointerEvents: 'all',
+             },
+             [theme.breakpoints.up('md')]: {
+-              height: theme.appShell.headerHeightMd,
+-              top: 0,
++              height: '77px',
+               display: 'flex',
+               justifyContent: 'left',
+               width: '100%',
+@@ -118,8 +130,9 @@ export function LayoutDefault(props: LayoutDefaultProps) {
+               zIndex: 'speedDial',
+               [theme.breakpoints.up('sm')]: {
+                 position: 'sticky',
+-                marginTop: `calc(${theme.appShell.headerHeightMd} * -1 - calc(${fabIconSize} / 2))`,
+-                top: `calc(${theme.appShell.headerHeightMd} / 2 - (${fabIconSize} / 2))`,
++                // Use the new fixed header height
++                marginTop: `calc(77px * -1 - calc(${fabIconSize} / 2))`,
++                top: `calc(77px / 2 - (${fabIconSize} / 2))`,
+               },
+               [theme.breakpoints.down('md')]: {
+                 position: 'fixed',
+@@ -152,10 +165,10 @@ export function LayoutDefault(props: LayoutDefaultProps) {
+         ) : (
+           <div />
+         )}
+-        <div className={classes.children}>
++        <Box className={classes.children} sx={{ pt: '77px' }}>
+           <div id='skip-nav' tabIndex={-1} />
+           {children}
+-        </div>
++        </Box>
+         <div className={classes.footer}>{footer}</div>
+       </LayoutProvider>
+     </Box>

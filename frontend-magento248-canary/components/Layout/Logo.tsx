@@ -1,7 +1,7 @@
 import { useQuery } from '@graphcommerce/graphql'
 import { StoreConfigDocument } from '@graphcommerce/magento-store'
 import { Logo as LogoBase } from '@graphcommerce/next-ui'
-import svgLogo from './graphcommerce.svg'
+import svgLogo from './graphcommerce.png'
 
 export function Logo() {
   const { header_logo_src, secure_base_media_url, logo_alt, logo_height, logo_width } =
@@ -17,7 +17,7 @@ export function Logo() {
         '& .GcLogo-logo': {
           display: 'block',
           width: 'auto',
-          height: { xs: '16px', md: '27px' },
+          height: { xs: '46px', md: '42px' },
           paddingLeft: { xs: '10px', md: 0 },
           marginTop: { xs: 0, md: '-5px' },
           filter: 'none',
