@@ -27,11 +27,10 @@ import {
 import { PageMeta, StoreConfigDocument } from '@graphcommerce/magento-store'
 import { productFiltersLayout, productFiltersPro } from '@graphcommerce/next-config/config'
 import type { GetStaticProps } from '@graphcommerce/next-ui'
-import { LayoutHeader } from '@graphcommerce/next-ui'
+import { iconChevronLeft, iconSearch, IconSvg, LayoutHeader } from '@graphcommerce/next-ui'
+import { t } from '@lingui/core/macro'
 import { Box, IconButton, InputAdornment } from '@mui/material'
 import { useRouter } from 'next/router'
-import { IconSvg, iconChevronLeft, iconSearch } from '@graphcommerce/next-ui'
-import { t } from '@lingui/core/macro'
 import type { LayoutNavigationProps } from '../../components'
 import {
   LayoutDocument,
@@ -119,7 +118,11 @@ function SearchResultPage(props: SearchResultProps) {
               <SearchField
                 size='small'
                 placeholder={'Search Product'}
-                startAdornment={<InputAdornment position='start' sx={{ mr: 1, color: 'text.disabled' }}><IconSvg src={iconSearch} /></InputAdornment>}
+                startAdornment={
+                  <InputAdornment position='start' sx={{ mr: 1, color: 'text.disabled' }}>
+                    <IconSvg src={iconSearch} />
+                  </InputAdornment>
+                }
                 formControl={{
                   sx: {
                     width: '100%',
@@ -132,9 +135,10 @@ function SearchResultPage(props: SearchResultProps) {
                     '& .MuiOutlinedInput-root': { height: 64, alignItems: 'center' },
                     '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
                     // hide the end adornment (clear icon) on mobile to match screenshot
-                    '& .MuiOutlinedInput-root .MuiInputAdornment-root.MuiInputAdornment-positionEnd': {
-                      display: { xs: 'none', md: 'flex' },
-                    },
+                    '& .MuiOutlinedInput-root .MuiInputAdornment-root.MuiInputAdornment-positionEnd':
+                      {
+                        display: { xs: 'none', md: 'flex' },
+                      },
                     '& .MuiOutlinedInput-root .MuiIconButton-root': {
                       display: { xs: 'none', md: 'flex' },
                     },

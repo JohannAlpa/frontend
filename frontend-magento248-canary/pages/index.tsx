@@ -1,16 +1,24 @@
 import type { PageOptions } from '@graphcommerce/framer-next-pages'
 import { cacheFirst } from '@graphcommerce/graphql'
+import { CartFab, useCartEnabled } from '@graphcommerce/magento-cart'
 import type { MenuQueryFragment } from '@graphcommerce/magento-category'
 import { ProductListDocument } from '@graphcommerce/magento-product'
 import type { ProductListQuery } from '@graphcommerce/magento-product'
 import { StoreConfigDocument } from '@graphcommerce/magento-store'
 import type { GetStaticProps } from '@graphcommerce/next-ui'
-import { ItemScroller, LayoutHeader, LayoutTitle, responsiveVal } from '@graphcommerce/next-ui'
-import { Box, Button, Card, CardContent, Container, Typography } from '@mui/material'
+import {
+  iconSearch,
+  IconSvg,
+  ItemScroller,
+  LayoutHeader,
+  LayoutTitle,
+  responsiveVal,
+} from '@graphcommerce/next-ui'
+import { Box, Button, Card, CardContent, Container, IconButton, Typography } from '@mui/material'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import type { LayoutNavigationProps } from '../components'
-import { LayoutDocument, LayoutNavigation, ProductListItems } from '../components'
+import { LayoutDocument, LayoutNavigation, Logo, ProductListItems } from '../components'
 import { graphqlSharedClient, graphqlSsrClient } from '../lib/graphql/graphqlSsrClient'
 
 type ImportMetaGraphCommerce = { graphCommerce?: { breadcrumbs?: boolean } }
@@ -21,6 +29,7 @@ type GetPageStaticProps = GetStaticProps<LayoutNavigationProps, Props, RouteProp
 
 function CmsPage(props: Props) {
   const { products, menu } = props
+  const cartEnabled = useCartEnabled()
 
   // Get first 10 products for featured section
   const featuredProducts = products?.items?.slice(0, 10) || []
@@ -99,6 +108,93 @@ function CmsPage(props: Props) {
 
   return (
     <>
+      {/* Mobile header - Search | Cart | Menu icons */}
+      <Box
+        sx={{
+          display: { xs: 'flex', sm: 'none' },
+          alignItems: 'center',
+          width: '100%',
+          gap: 2,
+          p: 2,
+          bgcolor: 'background.paper',
+        }}
+      >
+        {/* Logo on the left */}
+        <Logo />
+
+        {/* Spacer pushes actions to the right */}
+        <Box sx={{ flexGrow: 1 }} />
+
+        {/* Mobile icons: Search | Cart | Menu */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+          {/* Small search icon */}
+          <IconButton
+            href='/search'
+            color='inherit'
+            aria-label='Search'
+            sx={{ bgcolor: 'rgba(255,255,255,0.7)', width: 36, height: 36 }}
+          >
+            <IconSvg src={iconSearch} />
+          </IconButton>
+
+          {/* Cart: use CartFab for accurate quantity badge, scaled down */}
+          {cartEnabled && (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <CartFab
+                BadgeProps={{ color: 'secondary' }}
+                sx={{
+                  width: 36,
+                  height: 36,
+                  minWidth: 36,
+                  bgcolor: 'rgba(255,255,255,0.95)',
+                  boxShadow: 2,
+                  ml: 0,
+                  borderRadius: '50%',
+                  overflow: 'hidden',
+                  p: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  '& svg': { margin: 0 },
+                }}
+              />
+            </Box>
+          )}
+
+          {/* Menu: three vertical dots inside a translucent circle */}
+          <IconButton
+            href='/'
+            color='inherit'
+            aria-label='Menu'
+            sx={{
+              bgcolor: 'rgba(255,255,255,0.95)',
+              width: 36,
+              height: 36,
+              ml: 0,
+              boxShadow: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box sx={{ display: 'grid', gap: '3px' }}>
+              <Box
+                component='span'
+                sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: 'text.primary' }}
+              />
+              <Box
+                component='span'
+                sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: 'text.primary' }}
+              />
+              <Box
+                component='span'
+                sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: 'text.primary' }}
+              />
+            </Box>
+          </IconButton>
+        </Box>
+      </Box>
+
       {/* Removed floating Home header to avoid duplicate sticky headers */}
 
       {/* Keep the ones above the PRE-LOVED collection */}
@@ -107,7 +203,6 @@ function CmsPage(props: Props) {
       <FullBleedCarousel
         images={heroSections.find((s) => s.id === 'hero-1')?.images ?? []}
         intervalMs={heroSections.find((s) => s.id === 'hero-1')?.intervalMs ?? 5000}
-        sx={{ mt: '-77px' }}
       />
 
       {/* Hero 2: NEW JEWELRY Collection */}

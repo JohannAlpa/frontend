@@ -118,8 +118,15 @@ export function LayoutNavigation(props: LayoutNavigationProps) {
         noSticky={router.asPath.split('?')[0] === '/'}
         header={
           <>
-            {/* Header wrapper: transparent, logo left, actions right */}
-            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', gap: 2 }}>
+            {/* Header wrapper: transparent, logo left, actions right - only on desktop */}
+            <Box
+              sx={{
+                display: { xs: 'none', sm: 'flex' },
+                alignItems: 'center',
+                width: '100%',
+                gap: 2,
+              }}
+            >
               {/* Logo on the left */}
               <Logo />
 
@@ -195,99 +202,20 @@ export function LayoutNavigation(props: LayoutNavigationProps) {
                   </IconButton>
                 </Box>
               </Box>
-
-              {/* Mobile top right (keeps an accessible search and menu) */}
-              <MobileTopRight
-                sx={{
-                  display: { xs: 'flex', sm: 'none' },
-                  alignItems: 'center',
-                  gap: 1.25,
-                  position: 'absolute',
-                  top: 16,
-                  right: 12,
-                  zIndex: 20,
-                }}
-              >
-                {/* Small search icon */}
-                <IconButton
-                  href='/search'
-                  color='inherit'
-                  aria-label={t`Search`}
-                  sx={{ bgcolor: 'rgba(255,255,255,0.7)', width: 36, height: 36 }}
-                >
-                  <IconSvg src={iconSearch} />
-                </IconButton>
-
-                {/* Cart: use CartFab for accurate quantity badge, scaled down */}
-                {cartEnabled && (
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <CartFab
-                      BadgeProps={{ color: 'secondary' }}
-                      sx={{
-                        width: 36,
-                        height: 36,
-                        minWidth: 36,
-                        bgcolor: 'rgba(255,255,255,0.95)',
-                        boxShadow: 2,
-                        ml: 0,
-                        borderRadius: '50%',
-                        overflow: 'hidden',
-                        p: 0,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        '& svg': { margin: 0 },
-                      }}
-                    />
-                  </Box>
-                )}
-
-                {/* Menu: three vertical dots inside a translucent circle */}
-                <IconButton
-                  onClick={() => selection.set([])}
-                  color='inherit'
-                  aria-label={t`Menu`}
-                  sx={{
-                    bgcolor: 'rgba(255,255,255,0.95)',
-                    width: 36,
-                    height: 36,
-                    ml: 0,
-                    boxShadow: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Box sx={{ display: 'grid', gap: '3px' }}>
-                    <Box
-                      component='span'
-                      sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: 'text.primary' }}
-                    />
-                    <Box
-                      component='span'
-                      sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: 'text.primary' }}
-                    />
-                    <Box
-                      component='span'
-                      sx={{ width: 3, height: 3, borderRadius: '50%', bgcolor: 'text.primary' }}
-                    />
-                  </Box>
-                </IconButton>
-              </MobileTopRight>
             </Box>
           </>
         }
-        // footer={
-        //   <Footer
-        //     socialLinks={
-        //       footerBlock ? (
-        //         <CmsBlock cmsBlock={footerBlock} productListRenderer={productListRenderer} />
-        //       ) : (
-        //         <div />
-        //       )
-        //     }
-        //   />
-        // }
+        footer={
+          <Footer
+            socialLinks={
+              footerBlock ? (
+                <CmsBlock cmsBlock={footerBlock} productListRenderer={productListRenderer} />
+              ) : (
+                <div />
+              )
+            }
+          />
+        }
         menuFab={<NavigationFab onClick={() => selection.set([])} />}
       >
         {children}
